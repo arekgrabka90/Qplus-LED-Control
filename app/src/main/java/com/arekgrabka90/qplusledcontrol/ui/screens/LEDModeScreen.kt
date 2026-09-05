@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arekgrabka90.qplusledcontrol.data.PreferenceRepository
+import com.arekgrabka90.qplusledcontrol.led.LEDController
 import com.arekgrabka90.qplusledcontrol.models.LEDMode
 import kotlinx.coroutines.launch
 
@@ -51,6 +52,7 @@ fun LEDModeScreen(
                         }
                         true
                     }
+
                     event.key == Key.DirectionUp -> {
                         selectedMode = when (selectedMode) {
                             LEDMode.FIXED -> LEDMode.MANUAL
@@ -60,12 +62,14 @@ fun LEDModeScreen(
                         }
                         true
                     }
+
                     event.key == Key.Enter -> {
                         scope.launch {
                             preferenceRepository.setLedMode(selectedMode)
                         }
                         true
                     }
+
                     else -> false
                 }
             }

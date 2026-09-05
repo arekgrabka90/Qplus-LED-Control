@@ -15,8 +15,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arekgrabka90.qplusledcontrol.data.PreferenceRepository
-import com.arekgrabka90.qplusledcontrol.models.PresetColors
 import com.arekgrabka90.qplusledcontrol.led.LEDController
+import com.arekgrabka90.qplusledcontrol.models.PresetColors
+import kotlinx.coroutines.launch
 
 @Composable
 fun ColorPickerScreen(
@@ -24,8 +25,16 @@ fun ColorPickerScreen(
     ledController: LEDController
 ) {
     val scope = rememberCoroutineScope()
-    val selectedColor by preferenceRepository.selectedColor.collectAsState(initial = PresetColors.WHITE)
+
+    val selectedColor by preferenceRepository.selectedColor.collectAsState(
+        initial = PresetColors.BLUE
+    )
+
     var selectedColorIndex by remember { mutableStateOf(0) }
+
+    LaunchedEffect(selectedColor) {
+        selectedColorIndex = PresetColors.all.indexOf(selectedColor).coerceAtLeast(0)
+    }
 
     Column(
         modifier = Modifier
@@ -34,20 +43,35 @@ fun ColorPickerScreen(
             .padding(48.dp)
             .onKeyEvent { event ->
                 when {
-                    event.key == Key.DirectionDown -> {
-                        selectedColorIndex = (selectedColorIndex + 1) % PresetColors.all.size
+                    event.key == Key.DirectionLeft -> {
+                        selectedColorIndex =
+                            if (selectedColorIndex > 0) {
+                                selectedColorIndex - 1
+                            } else {
+                                PresetColors.all.lastIndex
+                            }
                         true
                     }
-                    event.key == Key.DirectionUp -> {
-                        selectedColorIndex = if (selectedColorIndex > 0) selectedColorIndex - 1 else PresetColors.all.size - 1
+
+                    event.key == Key.DirectionRight -> {
+                        selectedColorIndex =
+                            if (selectedColorIndex < PresetColors.all.lastIndex) {
+                                selectedColorIndex + 1
+                            } else {
+                                0
+                            }
                         true
                     }
+
                     event.key == Key.Enter -> {
-    scope.launch {
-        preferenceRepository.setSelectedColor(PresetColors.all[selectedColorIndex])
-    }
-    true
+                        scope.launch {
+                            preferenceRepository.setSelectedColor(
+                                PresetColors.all[selectedColorIndex]
+                            )
+                        }
+                        true
                     }
+
                     else -> false
                 }
             },
@@ -57,64 +81,49 @@ fun ColorPickerScreen(
             text = "COLOR PICKER",
             fontSize = 48.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF1f78d1)
+            color = Color(0xFF1F78D1)
         )
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        Text(
+            text = "SELECT COLOR",
+            fontSize = 28.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         PresetColors.all.forEachIndexed { index, color ->
-            ColorOption(
-                colorName = getColorName(index),
-                color = color,
-                selected = index == selectedColorIndex
-            )
-        }
-    }
-}
+            Button(
+                onClick = {
+                    selectedColorIndex = index
 
-@Composable
-fun ColorOption(
-    colorName: String,
-    color: com.arekgrabka90.qplusledcontrol.models.RGBColor,
-    selected: Boolean
-) {
-    Button(
-        onClick = { },
-        modifier = Modifier
-            .width(400.dp)
-            .height(80.dp),
-    ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Box(
+                    scope.launch {
+                        preferenceRepository.setSelectedColor(color)
+                    }
+                },
                 modifier = Modifier
-                    .size(40.dp)
-                    .background(Color(color.toInt()))
-            )
-            Text(
-                text = colorName,
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = if (selected) Color(0xFF1f78d1) else Color.White
-            )
+                    .width(500.dp)
+                    .height(70.dp)
+            ) {
+                Text(
+                    text = color.name,
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            }
         }
-    }
-}
 
-private fun getColorName(index: Int): String {
-    return when (index) {
-        0 -> "Red"
-        1 -> "Green"
-        2 -> "Blue"
-        3 -> "Yellow"
-        4 -> "Purple"
-        5 -> "Cyan"
-        6 -> "White"
-        7 -> "Orange"
-        8 -> "Pink"
-        else -> "Custom"
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "CURRENT: ${PresetColors.all[selectedColorIndex].name}",
+            fontSize = 26.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
     }
 }

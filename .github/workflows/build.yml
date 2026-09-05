@@ -38,11 +38,11 @@ jobs:
 
       - name: Build debug APK
         run: |
-          gradle assembleDebug
+          gradle -Pandroid.useAndroidX=true assembleDebug
 
       - name: Run unit tests
         run: |
-          gradle test
+          gradle -Pandroid.useAndroidX=true test
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

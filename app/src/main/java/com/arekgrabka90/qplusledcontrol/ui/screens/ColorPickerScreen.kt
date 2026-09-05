@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
@@ -32,8 +31,21 @@ fun ColorPickerScreen(
 
     var selectedColorIndex by remember { mutableStateOf(0) }
 
+    val colorNames = listOf(
+        "RED",
+        "GREEN",
+        "BLUE",
+        "YELLOW",
+        "PURPLE",
+        "CYAN",
+        "WHITE",
+        "ORANGE",
+        "PINK"
+    )
+
     LaunchedEffect(selectedColor) {
-        selectedColorIndex = PresetColors.all.indexOf(selectedColor).coerceAtLeast(0)
+        selectedColorIndex =
+            PresetColors.all.indexOf(selectedColor).coerceAtLeast(0)
     }
 
     Column(
@@ -109,7 +121,7 @@ fun ColorPickerScreen(
                     .height(70.dp)
             ) {
                 Text(
-                    text = color.name,
+                    text = colorNames[index],
                     fontSize = 28.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
@@ -120,7 +132,7 @@ fun ColorPickerScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "CURRENT: ${PresetColors.all[selectedColorIndex].name}",
+            text = "CURRENT: ${colorNames[selectedColorIndex]}",
             fontSize = 26.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White

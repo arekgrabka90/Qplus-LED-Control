@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_blue">#1f78d1</color>
+    <color name="dark_bg">#000000</color>
+    <color name="card_bg">#1a1a1a</color>
+    <color name="text_primary">#ffffff</color>
+    <color name="text_secondary">#aaaaaa</color>
+    <color name="led_red">#ff0000</color>
+    <color name="led_green">#00ff00</color>
+    <color name="led_blue">#0000ff</color>
+</resources>

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arekgrabka90.qplusledcontrol.data.PreferenceRepository
 import com.arekgrabka90.qplusledcontrol.models.PresetColors
+import com.arekgrabka90.qplusledcontrol.led.LEDController
 
 @Composable
 fun ColorPickerScreen(
@@ -42,10 +43,10 @@ fun ColorPickerScreen(
                         true
                     }
                     event.key == Key.Enter -> {
-                        kotlinx.coroutines.GlobalScope.launch {
-                            preferenceRepository.setSelectedColor(PresetColors.all[selectedColorIndex])
-                        }
-                        true
+    scope.launch {
+        preferenceRepository.setSelectedColor(PresetColors.all[selectedColorIndex])
+    }
+    true
                     }
                     else -> false
                 }
